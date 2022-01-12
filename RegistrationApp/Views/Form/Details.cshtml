@@ -1,0 +1,66 @@
+﻿@using RegistrationApp.Extensions
+@model RegistrationApp.ViewModels.FormViewModel
+
+@{
+    ViewData["Title"] = "Form";
+}
+
+<h1>@Html.DisplayFor(model => model.Form.Title)</h1>
+
+
+@using (Html.BeginForm())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Klausimas
+                </th>
+                <th>
+                    Atsakymas
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model?.Questions?.Count; i++)
+            {
+                var question = Model.Questions[i];
+                var fqa = Model.FormQuestionAnswers.FirstOrDefault(fqa => fqa.QuestionId == question.Id);
+                <tr>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => question.Title)
+                    </td>
+                    <td>
+                        @Html.DropDownList($"fqas[{i}].AnswerId",
+                new SelectList(
+                Model.GetAnswers(question.Id),
+                "Id",
+                "Title",
+                Model.GetFormQuestionAnswer(question.Id)?.AnswerId
+                ),
+                htmlAttributes: new { @class = "form-control", @id = $"AnswerId-{i}" }.Disable(Model.DisableEdit))
+
+                        @Html.Hidden($"fqas[{i}].QuestionId", question.Id)
+                        @Html.Hidden($"fqas[{i}].FormId", Model.Form.Id)
+                        @Html.Hidden($"fqas[{i}].Id", fqa?.Id)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="form-actions no-color">
+        @{
+            var className = "btn btn-outline-secondary";
+            if (!Model.DisableEdit)
+                className += " disabled";
+        }
+
+        @Html.ActionLink("Koreguoti", "Details", "Form", new { disableEdit = false }, new { @class = className}.Disable(!Model.DisableEdit))
+        <input type="submit" value="Saugoti" class="btn btn-outline-success" disabled="@(Model.DisableEdit)" />
+        <input type="reset" value="Atšaukti" class="btn btn-outline-warning" disabled="@(Model.DisableEdit)" />
+
+        @Html.ActionLink("Atgal į Formas", "Index", "Form", null, new {@class= "btn btn-outline-info ml-4 "} )
+    </div>
+}

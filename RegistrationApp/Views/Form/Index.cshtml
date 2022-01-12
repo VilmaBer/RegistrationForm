@@ -1,0 +1,31 @@
+﻿@model IEnumerable<RegistrationApp.Models.Form>
+
+@{
+    ViewData["Title"] = "Formos";
+}
+
+<h1>Formų sąrašas</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+              Formos pavadinimas
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var form in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => form.Title)
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@form.Id">Detaliau</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
